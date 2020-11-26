@@ -1,0 +1,84 @@
+version: "3.7"
+services: 
+  flask:
+    build: ./flask
+    container_name: flask_tele
+    restart: always
+    environment: 
+      - APP_NAME=MyFlaskApp
+    expose: 
+      - 8080
+    networks: 
+      - my-network
+    depends_on: 
+      - mysql
+    links:
+      - mysql
+    volumes: 
+      - ./flask:/app
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    restart: always
+    ports: 
+      - "80:80"
+    networks: 
+      - my-network
+    volumes: 
+      - ./nginx:/app
+
+  mysql:
+    build: ./mysql
+    container_name: mydb1
+    hostname: mysql
+    restart: always
+    environment: 
+      - MYSQL_ROOT_PASSWORD=a123456
+      - MYSQL_DATABASE=data_bot
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=a123456
+    networks: 
+      - my-network
+    volumes: 
+      - ./mysql/db:/var/lib/mysql # folder DB 
+      - ./mysql/db/my.cnf:/etc/mysql/my.cnf
+    # ports: 
+    #   - "3306:3306"
+
+  # telebot:
+  #   build: ./telebot
+  #   container_name: telebot
+  #   restart: always
+  #   networks: 
+  #     - my-network
+  #   depends_on: 
+  #     - mysql
+  #   links:
+  #     - mysql
+  #   # volumes: 
+  #   #   - ./telebot:/app/telebot
+  #   volumes: 
+  #     - ./flask:/code
+  #   # command: export PYTHONPATH='/code' && python app/main_telebot.py
+  #   command: python app/main_telebot.py
+  #   environment: 
+  #     - PYTHONPATH=/code
+
+  # kamera:
+  #   build: ./kamera
+  #   container_name: kamera
+  #   restart: always
+  #   networks: 
+  #     - my-network
+  #   depends_on: 
+  #     - mysql
+  #   links:
+  #     - mysql
+  #   volumes: 
+  #     - ./flask:/app
+
+networks:                             
+  my-network:
+    driver: bridge
+

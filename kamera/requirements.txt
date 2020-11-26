@@ -1,0 +1,6 @@
+Flask
+Flask-mysql
+Flask-sslify
+lxml
+requests
+uwsgi
